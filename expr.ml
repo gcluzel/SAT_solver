@@ -1,9 +1,12 @@
 (* un type pour des expressions arithmétiques simples *)
 type expr =
     Const of int
-  | Add of expr*expr
-  | Mul of expr*expr
-  | Min of expr*expr
+  | Conj of expr*expr
+  | Disj of expr*expr
+  | Xor of expr*expr
+  | Impl of expr*expr
+  | Equiv of expr*expr
+  | Not of expr
 
 
 
@@ -18,17 +21,30 @@ let rec affiche_expr e =
 	print_string ")"
       end
   in
+  let aff_not a =
+    begin
+      print_string "Not(";
+      affiche_expr a;
+      print_string ")"
+    end
+  in
   match e with
   | Const k -> print_int k
-  | Add(e1,e2) -> aff_aux "Add(" e1 e2
-  | Mul(e1,e2) -> aff_aux "Mul(" e1 e2
-  | Min(e1,e2) -> aff_aux "Min(" e1 e2
+  | Conj(e1,e2) -> aff_aux "Conj(" e1 e2
+  | Disj(e1,e2) -> aff_aux "Disj(" e1 e2
+  | Xor(e1,e2) -> aff_aux "Xor(" e1 e2
+  | Impl(e1,e2) -> aff_aux "Impl(" e1 e2
+  | Equiv(e1,e2) -> aff_aux "Equiv(" e1 e2
+  | Not(e1) -> aff_not e1
 
 (* sémantique opérationnelle à grands pas *)
 let rec eval = function
-  | Const k -> k
-  | Add(e1,e2) -> (eval e1) + (eval e2)
-  | Mul(e1,e2) -> (eval e1) * (eval e2)
-  | Min(e1,e2) -> (eval e1) - (eval e2)
+  | Const k -> true
+  | Conj(e1,e2) -> (eval e1) && (eval e2)
+  | Disj(e1,e2) -> (eval e1) || (eval e2)
+  | Xor(e1,e2) -> (eval e1) <> (eval e2)
+  | Impl(e1, e2) -> not (eval e1) && (eval e2)
+  | Equiv(e1,e2) -> not ((eval e1) <> (eval e2))
+  | Not(e1) -> not (eval e1)
 
   

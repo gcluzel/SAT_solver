@@ -11,9 +11,12 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
                                       associé au tampon où sont
                                       lus les caractères *)
   | '\n'            { EOL }
-  | '+'             { PLUS }
-  | '*'             { TIMES }
-  | '-'             { MINUS }
+  | "/\\"            { CONJ }
+  | "\\/"            { DISJ }
+  | 'X'             { XOR }
+  | "=>"            { IMPL }
+  | "<=>"           { EQUIV }
+  | '-'             { NOT }
   | '('             { LPAREN }
   | ')'             { RPAREN }
   | ['0'-'9']+ as s { INT (int_of_string s) }

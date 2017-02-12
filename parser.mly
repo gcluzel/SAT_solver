@@ -7,14 +7,16 @@ open Expr   (* rappel: dans expr.ml:
 %}
 /* description des lexèmes, ceux-ci sont décrits (par vous) dans lexer.mll */
 
-%token <int> INT       /* le lexème INT a un attribut entier */
-%token PLUS TIMES MINUS
+%token <int> INT       /* le lexème INT a un attribut entier */                
+%token CONJ DISJ XOR IMPL EQUIV NOT
 %token LPAREN RPAREN
 %token EOL             /* retour à la ligne */
 
-%left PLUS MINUS  /* associativité gauche: a+b+c, c'est (a+b)+c */
-%left TIMES  /* associativité gauche: a*b*c, c'est (a*b)*c */
-%nonassoc UMINUS  /* un "faux token", correspondant au "-" unaire */
+%left DISJ
+%left CONJ
+%left XOR
+%left EQUIV IMPL  /* associativité gauche: a+b+c, c'est (a+b)+c */
+%nonassoc NOT  /* un "faux token", correspondant au "-" unaire */
 
 %start main             /* "start" signale le point d'entrée: */
                         /* c'est ici main, qui est défini plus bas */
@@ -31,9 +33,11 @@ main:                       /* <- le point d'entrée (cf. + haut, "start") */
 expr:			    /* règles de grammaire pour les expressions */
   | INT                     { Const $1 }
   | LPAREN expr RPAREN      { $2 } /* on récupère le deuxième élément */
-  | expr PLUS expr          { Add($1,$3) }
-  | expr TIMES expr         { Mul($1,$3) }
-  | expr MINUS expr         { Min($1,$3) }
-  | MINUS expr %prec UMINUS { Min(Const 0, $2) }
+  | expr CONJ expr          { Conj($1,$3) }
+  | expr DISJ expr          { Disj($1,$3) }
+  | expr XOR expr           { Xor($1,$3) }
+  | expr EQUIV expr         { Equiv($1,$3) }
+  | expr IMPL expr          { Impl($1,$3) }
+  | NOT expr %prec NOT               { Not($2) }
 ;
 
