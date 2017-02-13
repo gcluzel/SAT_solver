@@ -1,4 +1,4 @@
-(* un type pour des expressions arithmétiques simples *)
+(* un type pour des expressions boolÃ©ennes *)
 type expr =
     Const of int
   | Conj of expr*expr
@@ -14,9 +14,9 @@ type expr =
 let rec affiche_expr e =
   let aff_aux s a b = 
       begin
-	print_string s;
+	print_string "(";
 	affiche_expr a;
-	print_string ", ";
+	print_string s;
 	affiche_expr b;
 	print_string ")"
       end
@@ -30,14 +30,14 @@ let rec affiche_expr e =
   in
   match e with
   | Const k -> print_int k
-  | Conj(e1,e2) -> aff_aux "Conj(" e1 e2
-  | Disj(e1,e2) -> aff_aux "Disj(" e1 e2
-  | Xor(e1,e2) -> aff_aux "Xor(" e1 e2
-  | Impl(e1,e2) -> aff_aux "Impl(" e1 e2
-  | Equiv(e1,e2) -> aff_aux "Equiv(" e1 e2
+  | Conj(e1,e2) -> aff_aux "/\\" e1 e2
+  | Disj(e1,e2) -> aff_aux "\\/" e1 e2
+  | Xor(e1,e2) -> aff_aux "Xor" e1 e2
+  | Impl(e1,e2) -> aff_aux "=>" e1 e2
+  | Equiv(e1,e2) -> aff_aux "<=>" e1 e2
   | Not(e1) -> aff_not e1
 
-(* sémantique opérationnelle à grands pas *)
+(* sÃ©mantique opÃ©rationnelle Ã  grands pas *)
 let rec eval = function
   | Const k -> true
   | Conj(e1,e2) -> (eval e1) && (eval e2)
