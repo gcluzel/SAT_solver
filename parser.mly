@@ -2,7 +2,7 @@
 (* --- préambule: ici du code Caml --- *)
 
 open Expr   (* rappel: dans expr.ml: 
-             type expr = Const of int | Add of expr*expr | Mull of expr*expr *)
+            type expr = Const of int | Conj of expr*expr | Disj of expr*expr | Xor of expr*expr | Impl of expr*expr | Equiv of expr*expr | Not of expr *)
 
 %}
 /* description des lexèmes, ceux-ci sont décrits (par vous) dans lexer.mll */
@@ -17,9 +17,9 @@ open Expr   (* rappel: dans expr.ml:
 %left XOR
 %left DISJ
 %left CONJ
-  /* associativité gauche: a+b+c, c'est (a+b)+c */
+  /* associativité gauche: a/\b/\c, c'est (a/\b)/\c */
 %nonassoc VNOT
-%nonassoc NOT  /* un "faux token", correspondant au "-" unaire */
+%nonassoc NOT  /* un "faux token", correspondant à la négation d'une variable propoistionnelle */
 
 %start main             /* "start" signale le point d'entrée: */
                         /* c'est ici main, qui est défini plus bas */
