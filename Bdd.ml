@@ -14,7 +14,7 @@ a xor b = if a then (if b then 0 else 1) else b
 not a = if a then 0 else 1
 a=>b = if a then b else 1
 a<=>b = if a then b else (if b then 0 else 1)*)
-
+(*Transfo e transforme l'expression e pour la mettre sous forme INF*)
 let rec transfo e =
   match e with
     Const a -> Var a
@@ -25,7 +25,7 @@ let rec transfo e =
   | Impl(e1,e2) -> If ((transfo e1),(transfo e2),Un)
   | Equiv(e1,e2) -> let tmp = transfo e2 in If ((transfo e1),tmp, (If (tmp, Zero, Un)))
 
-
+(*Fixer prend un exprif et donne à la variable n soit la valeur Zero soit la valeur Un*)
 let rec fixer e n bool =
   match e with
     Var p when n=p -> bool
@@ -34,6 +34,7 @@ let rec fixer e n bool =
   | Zero -> Zero
   | Un -> Un
 
+(*Simpl reconnait différents cas dans un exprif et le simplifie (par exemple si on a if a then 1 else 1 on peut remplacer tout ça par 1 tout simplement*)
 let rec simpl e =
   match e with
     If(e1,Zero, Zero) -> Zero
@@ -51,3 +52,14 @@ let rec simpl e =
   | If(Zero, e2, e3)-> simpl e3
   | If(Un, e2, e3) -> simpl e2
   | _ -> e
+
+(*Fonction auxiliaire pour construire le BDD : l'exploration est abandonnée plus tôt si la simplification renvoie Zero ou Un : il n'y a plus rien à explorer !*)
+let rec construire_bdd_aux e n =
+  match e with
+    Zero -> Leaf false
+  | Un -> Leaf true
+  | _ -> Node (n,construire_bdd_aux (simpl (fixer e n Zero)) (n+1),construire_bdd_aux (simpl (fixer e n Un)) (n+1))
+
+(*On appelle juste sur la première variable.*)
+let construire_bdd e =
+  construire_bdd_aux e 0
