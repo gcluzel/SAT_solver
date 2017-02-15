@@ -12,10 +12,12 @@ open Expr   (* rappel: dans expr.ml:
 %token LPAREN RPAREN
 %token EOL             /* retour à la ligne */
 
+%left EQUIV                            
+%left IMPL
+%left XOR
 %left DISJ
 %left CONJ
-%left XOR
-%left EQUIV IMPL  /* associativité gauche: a+b+c, c'est (a+b)+c */
+  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %nonassoc VNOT
 %nonassoc NOT  /* un "faux token", correspondant au "-" unaire */
 
