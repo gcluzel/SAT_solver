@@ -13,10 +13,12 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | '\n'            { EOL }
   | "/\\"            { CONJ }
   | "\\/"            { DISJ }
+  | "0"             { EOL}
   | 'X'             { XOR }
   | "=>"            { IMPL }
   | "<=>"           { EQUIV }
-  | '-'             { NOT }
+  | '-'             { VNOT }
+  | '~'             { NOT }
   | '('             { LPAREN }
   | ')'             { RPAREN }
   | ['0'-'9']+ as s { INT (int_of_string s) }

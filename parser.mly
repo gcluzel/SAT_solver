@@ -8,7 +8,7 @@ open Expr   (* rappel: dans expr.ml:
 /* description des lexèmes, ceux-ci sont décrits (par vous) dans lexer.mll */
 
 %token <int> INT       /* le lexème INT a un attribut entier */                
-%token CONJ DISJ XOR IMPL EQUIV NOT
+%token CONJ DISJ XOR IMPL EQUIV NOT VNOT
 %token LPAREN RPAREN
 %token EOL             /* retour à la ligne */
 
@@ -16,6 +16,7 @@ open Expr   (* rappel: dans expr.ml:
 %left CONJ
 %left XOR
 %left EQUIV IMPL  /* associativité gauche: a+b+c, c'est (a+b)+c */
+%nonassoc VNOT
 %nonassoc NOT  /* un "faux token", correspondant au "-" unaire */
 
 %start main             /* "start" signale le point d'entrée: */
@@ -38,6 +39,7 @@ expr:			    /* règles de grammaire pour les expressions */
   | expr XOR expr           { Xor($1,$3) }
   | expr EQUIV expr         { Equiv($1,$3) }
   | expr IMPL expr          { Impl($1,$3) }
-  | NOT expr %prec NOT               { Not($2) }
+  | NOT expr %prec NOT      { Not($2) }
+  | VNOT INT                { Not(Const $2) }
 ;
 
