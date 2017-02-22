@@ -39,18 +39,18 @@ let rec simpl e =
   match e with
     If(e1,Zero, Zero) -> Zero
   | If(e1,Un,Un) -> Un
-  | If(e1,Un,Zero) -> e1
-  | If(e1,e2,e3) -> let e1p=simpl e1 and e3p=simpl e3 and e2p=simpl e2 in begin
-		    match (e1p,e2p,e3p) with
-		      (_,Zero,Zero) -> Zero
-		    | (_,Un,Un) -> Un
-		    | (_,Un,Zero)-> e1p
-		    | (Un,_,_) -> e2p
-		    | (Zero,_,_) -> e3p
-		    | _ -> If(simpl e1,e2p,e3p)
-						      end
+  | If(e1,Un,Zero) -> simpl e1
   | If(Zero, e2, e3)-> simpl e3
   | If(Un, e2, e3) -> simpl e2
+  | If(e1,e2,e3) -> let e1p=simpl e1 and e3p=simpl e3 and e2p=simpl e2 in begin
+									 match (e1p,e2p,e3p) with (* Dès qu'on a simplifié e2 et e3 il faut refaire les tests, sinon on risque de rater des simplifications *)
+									   (_,Zero,Zero) -> Zero
+									 | (_,Un,Un) -> Un
+									 | (_,Un,Zero)-> e1p
+									 | (Un,_,_) -> e2p
+									 | (Zero,_,_) -> e3p
+									 | _ -> If(e1p,e2p,e3p)
+								       end
   | _ -> e
 
 (*Fonction auxiliaire pour construire le BDD : l'exploration est abandonnée plus tôt si la simplification renvoie Zero ou Un : il n'y a plus rien à explorer !*)
@@ -62,4 +62,4 @@ let rec construire_bdd_aux e n =
 
 (*On appelle juste sur la première variable.*)
 let construire_bdd e =
-  construire_bdd_aux e 0
+  construire_bdd_aux (transfo e) 0
