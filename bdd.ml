@@ -2,11 +2,67 @@ open Expr
 
 type tree = Leaf of bool
 	  | Node of int*tree*tree
+			       
 type exprif = Var of int
 	    | If of exprif*exprif*exprif
 	    | Zero
 	    | Un
 
+
+(* Fonctions nécessaire pour la première structure de donnée appelée T pour faire le partage *)
+let initt t =
+  let n = Array.length t in
+  begin
+    for i=0 to n-1 do
+      t.(i)<-Leaf (false);
+    done;
+    t.(1)<-Leaf (true);
+  end
+
+let add t node =
+  let i = ref 1 in
+  begin
+    while t.(!i) != Leaf (false) do
+      i:= (!i+1);
+    done;
+    t.(!i)<-node;
+    !i;
+  end
+
+let var t u =
+  match t.(u) with
+    Node (i,l,h) -> i
+  | _ -> failwith("error")
+
+		 
+let low t u =
+  match t.(u) with
+    Node (i,l,h) -> l
+  | _ -> failwith("error")
+
+		 
+let high t u =
+  match t.(u) with
+    Node (i,l,h) -> h
+  | _ -> failwith("error")
+(* Fin de ces fonctions *)		 
+		
+
+(* Fonctions pour la seconde structure de donnée appelée H nécessaire pour faire le partage *)
+let inith h =
+  Hashtbl.reset h
+
+let member h node =
+  Hashtbl.mem h node
+
+let lookup h node =
+  Hashtbl.find h node
+
+let insert h node u =
+  Hashtbl.replace h node u
+(* Fin de ces fonctions *)
+
+		  
 let rec afficher_bdd arbre =
   match arbre with
     Node (n,a1,a2) -> print_string "("; afficher_bdd a1; print_string " - ";print_int n;print_string " - "; afficher_bdd a2; print_string ")"
@@ -61,13 +117,30 @@ let rec simpl e =
 								       end
   | _ -> e
 
+let mk i v0 v1 t h =
+  if v0=v1 then v0
+  else
+    if member h (Node(i,v0,v1)) then t.(lookup h (Node(i,v0,v1)))
+    else let u = add t (Node(i,v0,v1)) in
+	 begin
+	   insert h (Node(i,v0,v1)) u;
+	   Node(i,v0,v1);
+	 end
+	   
+	   
 (*Fonction auxiliaire pour construire le BDD : l'exploration est abandonnée plus tôt si la simplification renvoie Zero ou Un : il n'y a plus rien à explorer !*)
-let rec construire_bdd_aux e n =
+let rec construire_bdd_aux e i t h =
   match e with
-    Zero -> Leaf false
-  | Un -> Leaf true
-  | _ -> Node (n,construire_bdd_aux (simpl (fixer e n Zero)) (n+1),construire_bdd_aux (simpl (fixer e n Un)) (n+1))
+    Zero -> Leaf (false)
+  | Un -> Leaf (true)
+  | _ -> let v0 = construire_bdd_aux (simpl (fixer e i Zero)) (i+1) t h and v1 = construire_bdd_aux (simpl (fixer e i Un)) (i+1) t h in
+	 (mk i v0 v1 t h)
 
 (*On appelle juste sur la première variable.*)
-let construire_bdd e =
-  construire_bdd_aux (transfo e) 1
+let construire_bdd e taille =
+  let t = Array.make taille (Leaf false) and h = Hashtbl.create taille in
+  begin
+    initt t;
+    inith h;
+    construire_bdd_aux (transfo e) 1 t h;
+  end

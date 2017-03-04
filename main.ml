@@ -5,7 +5,7 @@ let compile e =
   begin
     affiche_expr e;
     print_newline();
-    afficher_bdd (construire_bdd e);
+    afficher_bdd (construire_bdd e 100);
     print_newline()
   end
 
