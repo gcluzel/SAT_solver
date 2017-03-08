@@ -144,3 +144,10 @@ let construire_bdd e taille =
     inith h;
     construire_bdd_aux (transfo e) 1 t h;
   end
+
+
+let verif_sat t s =
+  print_string "OK"
+
+let verif_unsat t =
+  print_string "ARGH"

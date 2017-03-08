@@ -19,7 +19,7 @@ open Expr   (* rappel: dans expr.ml:
 %left CONJ
   /* associativité gauche: a/\b/\c, c'est (a/\b)/\c */
 %nonassoc VNOT
-%nonassoc NOT  /* un "faux token", correspondant à la négation d'une variable propoistionnelle */
+%nonassoc NOT  /* un "faux token", correspondant à la négation d'une variable propositionnelle */
 
 %start main             /* "start" signale le point d'entrée: */
                         /* c'est ici main, qui est défini plus bas */
