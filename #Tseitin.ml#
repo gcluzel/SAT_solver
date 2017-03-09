@@ -17,8 +17,8 @@ let liste_var expr =
   aux expr;
   !l
 
-(* fonction pour transformer l'expression pour enlever les implications et les équivalences *)
-let rec transform_expr expr =
+(* Cette fonction fait exactement une transformation de Tseitin, mais le type de retour donne la forme CNF sous forme de liste de clause, avec le nombre de variable *)
+let rec transform_expr_to_dimacs expr =
   match expr with
   | Const (x) -> Const x
   | Conj (exp1, exp2) -> Conj ((transform_expr exp1), (transform_expr exp2))
@@ -79,9 +79,44 @@ let rec tseitin expr =
        end
   in
   transform_sous_formule (transform_expr expr) !i;
-  (*let rec reduit l = match l with
+  let rec reduit l = match l with
     | x1 :: x2 :: [] -> Conj(x1, x2)
     | t :: q -> Conj(t, reduit(q))
   in
-  reduit !formule*)
-  (!formule, !i)
+  reduit !formule
+
+
+
+
+         
+ let rec tseitin expr =
+  (* numéro de la variable à choisir pour créer une nouvelle variable dans les formueles *)
+  let i = ref ((maxi (liste_var expr)) + 1)  in
+  (*On  fait les transformations données dans les diapos *)
+  let formule = ref [Const(!i)] in
+  let rec transform_sous_formule p varp =
+    match p with
+    | Const(x) -> formule :=  Disj(Not(Const(varp)), Const(x)) :: Disj(Const(varp), Not(Const(x))) :: !formule
+    | Not(p1) ->
+       begin
+         i := !i + 1;
+         formule := Disj(Not(Const(varp)),Not(Const(!i))) :: Disj(Const(varp), Const(!i)) :: !formule;
+         transform_sous_formule p1 !i
+       end
+    | Disj(p1,p2) ->
+       begin
+         i := !i + 2;
+         formule := Disj(Not(Const(varp)), Disj(Const(!i - 1), Const(!i))) :: Disj(Const(varp), Not(Const(!i-1))) :: Disj(Const(varp), Not(Const(!i))) :: ! formule;
+         transform_sous_formule p1 (!i - 1);
+         transform_sous_formule p2 !i
+       end
+    | Conj(p1,p2) ->
+       begin
+         i := !i + 2;
+         formule := Disj(Not(Const(varp)), Const(!i - 1)) :: Disj(Not(Const(varp)), Const(!i)) :: Disj(Const(varp), Disj(Not(Const(!i - 1)), Not(Const(!i)))) :: !formule;
+         transform_sous_formule p1 (!i - 1);
+         transform_sous_formule p2 !i
+       end
+  in
+  transform_sous_formule (transform_expr expr) !i;
+  (!

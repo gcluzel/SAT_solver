@@ -9,6 +9,10 @@
 /usr/bin/ocamlc -c -o expr.cmo expr.ml # cached
 # Target: bdd.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:bdd.cmo, file:bdd.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc -c -o bdd.cmo bdd.ml # cached
+# Target: dimacs.ml.depends, tags: { extension:ml, file:dimacs.ml, ocaml, ocamldep, quiet }
+/usr/bin/ocamldep -modules dimacs.ml > dimacs.ml.depends # cached
+# Target: dimacs.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:dimacs.cmo, file:dimacs.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc -c -o dimacs.cmo dimacs.ml # cached
 # Target: lexer.mll, tags: { extension:mll, file:lexer.mll, lexer, ocaml, ocamllex, quiet }
 /usr/bin/ocamllex -q lexer.mll # cached
 # Target: lexer.ml.depends, tags: { extension:ml, file:lexer.ml, ocaml, ocamldep, quiet }
@@ -21,20 +25,33 @@
 /usr/bin/ocamlc -c -o parser.cmi parser.mli # cached
 # Target: lexer.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:lexer.cmo, file:lexer.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc -c -o lexer.cmo lexer.ml # cached
+# Target: Tseitin.ml.depends, tags: { extension:ml, file:Tseitin.ml, ocaml, ocamldep, quiet }
+/usr/bin/ocamldep -modules Tseitin.ml > Tseitin.ml.depends # cached
+# Target: Tseitin.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Tseitin.cmo, file:Tseitin.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc -c -o Tseitin.cmo Tseitin.ml # cached
 # Target: main.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:main.cmo, file:main.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc -c -o main.cmo main.ml
 # Target: expr.cmx, tags: { compile, extension:cmx, extension:ml, file:expr.cmx, file:expr.ml, implem, native, ocaml, quiet }
-/usr/bin/ocamlopt -c -o expr.cmx expr.ml # cached
-# Target: bdd.cmx, tags: { compile, extension:cmx, extension:ml, file:bdd.cmx, file:bdd.ml, implem, native, ocaml, quiet }
-/usr/bin/ocamlopt -c -o bdd.cmx bdd.ml # cached
+/usr/bin/ocamlopt -c -o expr.cmx expr.ml
 # Target: parser.ml.depends, tags: { extension:ml, file:parser.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep -modules parser.ml > parser.ml.depends # cached
+/usr/bin/ocamldep -modules parser.ml > parser.ml.depends
 # Target: parser.cmx, tags: { compile, extension:cmx, extension:ml, file:parser.cmx, file:parser.ml, implem, native, ocaml, quiet }
-/usr/bin/ocamlopt -c -o parser.cmx parser.ml # cached
+/usr/bin/ocamlopt -c -o parser.cmx parser.ml
+# Target: bdd.cmx, tags: { compile, extension:cmx, extension:ml, file:bdd.cmx, file:bdd.ml, implem, native, ocaml, quiet }
+/usr/bin/ocamlopt -c -o bdd.cmx bdd.ml
+# Target: dimacs.cmx, tags: { compile, extension:cmx, extension:ml, file:dimacs.cmx, file:dimacs.ml, implem, native, ocaml, quiet }
+/usr/bin/ocamlopt -c -o dimacs.cmx dimacs.ml
 # Target: lexer.cmx, tags: { compile, extension:cmx, extension:ml, file:lexer.cmx, file:lexer.ml, implem, native, ocaml, quiet }
-/usr/bin/ocamlopt -c -o lexer.cmx lexer.ml # cached
+/usr/bin/ocamlopt -c -o lexer.cmx lexer.ml
+# Target: Tseitin.cmx, tags: { compile, extension:cmx, extension:ml, file:Tseitin.cmx, file:Tseitin.ml, implem, native, ocaml, quiet }
+/usr/bin/ocamlopt -c -o Tseitin.cmx Tseitin.ml
++ /usr/bin/ocamlopt -c -o Tseitin.cmx Tseitin.ml
+File "Tseitin.ml", line 58, characters 4-967:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a value that is not matched:
+(Xor (_, _)|Impl (_, _)|Equiv (_, _))
 # Target: main.cmx, tags: { compile, extension:cmx, extension:ml, file:main.cmx, file:main.ml, implem, native, ocaml, quiet }
 /usr/bin/ocamlopt -c -o main.cmx main.ml
 # Target: main.native, tags: { dont_link_with, extension:native, file:main.native, link, native, ocaml, program, quiet }
-/usr/bin/ocamlopt unix.cmxa expr.cmx bdd.cmx parser.cmx lexer.cmx main.cmx -o main.native
+/usr/bin/ocamlopt unix.cmxa expr.cmx Tseitin.cmx bdd.cmx dimacs.cmx parser.cmx lexer.cmx main.cmx -o main.native
 # Compilation successful.
