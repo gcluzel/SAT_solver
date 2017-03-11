@@ -1,5 +1,8 @@
 open Expr
 open Bdd
+open Tseitin
+open Dimacs
+       
 
 let compile e =
   begin
@@ -32,7 +35,14 @@ let calc () =
 
 let calc2 () =
   (* Travail de Guillaume*)
-  print_string "truc2"
+  let nom = Sys.argv.(2) in
+  let nom_fichier = String.sub nom 0 (String.index nom '.') in
+  let c = open_in Sys.argv.(2) in
+  let result = parse c in
+  close_in c;
+  let formule, i = tseitin result in
+  cnf_to_dimacs formule i nom_fichier;
+  print_string ("Le fichier " ^ nom_fichier ^ ".cnf a été créé \n")
 ;;
 let calc3 () =
   try
