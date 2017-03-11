@@ -23,7 +23,7 @@ let parse c = Parser.main Lexer.token (lexbuf c)
 let calc () =
   try
     let c = open_in Sys.argv.(1) in begin
-    (* On envoie en argument la première du fichier passé en argument qui doit donc contenir la formule à parser *)
+    (* On envoie en argument un channel sur le fichier passé en argument qui doit donc contenir la formule à parser *)
       let result = parse c in
       (* Expr.affiche_expr result; print_newline (); flush stdout *)
 	compile result; close_in c; end
@@ -34,6 +34,7 @@ let calc2 () =
   (* Travail de Guillaume*)
   print_string "truc2"
 ;;
+  
 let calc3 () =
   try
     (* On parse, on construit le BDD et Tseitin pour appeler minisat dessus *)
@@ -66,7 +67,32 @@ let calc3 () =
 
 
 let calc4() =
-  print_string "chose"
+  try
+    (* On parse, on construit le BDD et Tseitin pour appeler minisat dessus *)
+    let c = open_in Sys.argv.(4) in
+    begin
+      let result = parse c in
+      let t = construire_bdd result 100 in
+      (*Insérer Fonction pour créer Tseitin et stocker dans un fichier*)
+      let sortie_sat = "/tmp/output.txt" and minisat_command = "minisat "^Sys.argv.(3)^" /tmp/output.txt" and res = ref 0 in
+      begin 
+	res := Sys.command minisat_command;
+	let c = open_in sortie_sat in
+	begin
+	  let s = input_line c in
+	  begin
+	    match s with
+	      "SAT" -> verif_sat t (input_line c)
+	    | "UNSAT" -> verif_unsat t
+	    | _ -> failwith("error")
+	  end;
+	  close_in c;
+	end;
+	 res:= Sys.command "rm /tmp/output.txt"
+      end;
+      close_in c;
+    end
+  with _ -> (print_string "erreur de saisie\n")
 ;;
   
 let _ =
