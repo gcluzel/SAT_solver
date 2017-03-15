@@ -1,6 +1,6 @@
 open Expr
 
-(* Prends une expression CNF et la converti en un format dimacs *)
+(* Prend une expression CNF et la convertit en un format dimacs *)
 let cnf_to_dimacs expr i fichier =       
   let file = open_out (fichier ^ ".cnf") in
   output_string file ("p cnf "^ (string_of_int (i)) ^ " " ^ (string_of_int (List.length expr)) ^ "\n");

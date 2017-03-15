@@ -146,8 +146,59 @@ let construire_bdd e taille =
   end
 
 
-let verif_sat t s =
-  print_string "OK"
+let split s =
+  let n = String.length s and res = ref [] and pred = ref 0 and i = ref 0 and space = (String.get " " 0) in
+  begin
+  while !i<n do
+    if s.[!i] = space then
+      begin
+	res:= !res@[String.sub s !pred (!pred- !i)];
+	i:= !i+1;
+	pred := !i;
+      end
+    else
+      i:= !i+1
+  done;
+  !res
+  end
 
+let extraire ls =
+  match ls with
+    [] -> failwith("ARGH : Not enough variables in the minisat file")
+  | t::q -> let n = int_of_string t in
+	    begin
+	      if n<0 then (-n, false, q)
+	      else (n, true, q)
+	    end
+	    
+	   
+let rec verif_sat_aux t n bool ls =
+  match t with
+    Leaf (true) -> print_string "OK"
+  | Leaf (false) -> print_string "ARGH : Le ROBDD dit que minisat est un menteur !"
+  | Node (i, fg, fd) when (i=n && bool) -> let (np,boolp,lsp)=extraire ls in
+					   verif_sat_aux fd np boolp lsp
+  | Node (i, fg, fd) when (i=n && bool=false) -> let (np,boolp,lsp)=extraire ls in
+						 verif_sat_aux fg np boolp lsp
+  | Node (i, fg, fd) when (i>n) -> let(np,boolp,lsp)=extraire ls in
+				   verif_sat_aux t np boolp lsp
+  | _ -> failwith("ARGH : error while reading the robdd")
+    
+let verif_sat t s =
+  let sp = split s in
+  let (n,bool,ls)=extraire sp in
+  verif_sat_aux t n bool ls
+
+
+(* Pour vérifer que ce n'est pas satisfiable, on descend jusqu'aux feuilles : s'il y en a une qui vaut Vrai alors on a un problème ! *)
+let rec verif_unsat_aux t =
+  match t with
+    Leaf (true) -> false
+  | Leaf (false) -> true
+  | Node (n,fg,fd) -> (verif_unsat_aux fg) && (verif_unsat_aux fd)
+	       
 let verif_unsat t =
-  print_string "ARGH"
+  let bool = verif_unsat_aux t in
+  match bool with
+    false -> print_string "ARGH"
+  | true -> print_string "OK"

@@ -1,1 +1,1 @@
-bdd.ml: Array Expr Hashtbl
+bdd.ml: Array Expr Hashtbl String
