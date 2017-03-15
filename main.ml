@@ -35,13 +35,15 @@ let calc () =
 
 let opt_tseitin (nom) =
   (* Transformation au format dimacs et stockage dans un fichier : option -tseitin. On prend le nom en option pour pouvoir se resservir de la fonction plus tard *)
-  let nom_fichier = String.sub nom 0 (String.index nom '.') in
-  let c = open_in Sys.argv.(2) in
-  let result = parse c in
-  close_in c;
-  let formule, i = tseitin result in
-  cnf_to_dimacs formule i nom_fichier;
-  print_string ("Le fichier " ^ nom_fichier ^ ".cnf a été créé \n")
+  try
+    let nom_fichier = String.sub nom 0 (String.index nom '.') in
+    let c = open_in Sys.argv.(2) in
+    let result = parse c in
+    close_in c;
+    let formule, i = tseitin result in
+    cnf_to_dimacs formule i nom_fichier;
+    print_string ("Le fichier " ^ nom_fichier ^ ".cnf a été créé \n")
+  with _ -> (print_string "erreur pour l'option -tseitin \n")
 ;;
   
 let opt_minisat () =
