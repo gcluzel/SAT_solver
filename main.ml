@@ -33,10 +33,10 @@ let calc () =
   with _ -> (print_string "erreur de saisie\n")
 ;;
 
-let opt_tseitin (nom) =
+let opt_tseitin nom i =
   (* Transformation au format dimacs et stockage dans un fichier : option -tseitin. On prend le nom en option pour pouvoir se resservir de la fonction plus tard *)
   let nom_fichier = String.sub nom 0 (String.index nom '.') in
-  let c = open_in Sys.argv.(2) in
+  let c = open_in Sys.argv.(i) in
   let result = parse c in
   close_in c;
   let formule, i = tseitin result in
@@ -53,7 +53,7 @@ let opt_minisat () =
       let t = construire_bdd result 100 in
       begin
 	(* On crée en fait un fichier temporaire sur lequel on pourra appeler minisat *)
-	opt_tseitin("/tmp/pb.cnf");
+	opt_tseitin "/tmp/pb.cnf" 2;
 	let sortie_sat = "/tmp/output.txt" and minisat_command = "minisat /tmp/pb.cnf /tmp/output.txt" and res = ref 0 in
 	    begin 
 	      res := Sys.command minisat_command;
@@ -65,7 +65,7 @@ let opt_minisat () =
 		  match s with
 		    "SAT" -> verif_sat t (input_line c)
 		  | "UNSAT" -> verif_unsat t
-		  | _ -> failwith("error")
+		  | _ -> failwith("error in the reseult file of minisat")
 		end;
 		close_in c;
 	      end;
@@ -74,7 +74,7 @@ let opt_minisat () =
 	    close_in c;
       end;
     end
-  with _ -> (print_string "erreur de saisie\n")
+  with | e -> (print_string (Printexc.to_string e))
 ;;
 
 
@@ -87,7 +87,7 @@ let opt_tseitin_minisat() =
       let t = construire_bdd result 100 in
       begin
 	(* On applique l'option Tseitin qu'on stocke dans le ficihier demandé *)
-	opt_tseitin(Sys.argv.(3));
+	opt_tseitin Sys.argv.(3) 3;
 	let sortie_sat = "/tmp/output.txt" and minisat_command = "minisat "^Sys.argv.(3)^" /tmp/output.txt" and res = ref 0 in
 	begin 
 	  res := Sys.command minisat_command;
@@ -98,7 +98,7 @@ let opt_tseitin_minisat() =
 	      match s with
 		"SAT" -> verif_sat t (input_line c)
 	      | "UNSAT" -> verif_unsat t
-	      | _ -> failwith("error")
+	      | _ -> failwith("error in the result file of minisat")
 	    end;
 	    close_in c;
 	  end;
@@ -107,7 +107,7 @@ let opt_tseitin_minisat() =
 	close_in c;
       end;
     end
-  with _ -> (print_string "erreur de saisie\n")
+  with e -> (print_string (Printexc.to_string e))
 ;;
 
 (* On lit le nb d'arguments pour savoir quelles options a rentrées l'utilisateur *)
@@ -118,5 +118,5 @@ let _ =
 		   "-tseitin" -> opt_tseitin_minisat()
 		 | _ -> opt_minisat()
 	       end
-  | "-tseitin" -> opt_tseitin(Sys.argv.(2))
+  | "-tseitin" -> opt_tseitin Sys.argv.(2) 2
   | _ -> calc()

@@ -74,7 +74,7 @@ let opt_minisat () =
 	    close_in c;
       end;
     end
-  with _ -> (print_string "erreur de saisie\n")
+  with | e -> (print_string (Printexc.to_string e))
 ;;
 
 

@@ -147,24 +147,28 @@ let construire_bdd e taille =
 
 
 let split s =
-  let n = String.length s and res = ref [] and pred = ref 0 and i = ref 0 and space = (String.get " " 0) in
+  let n = String.length s
+  and res = ref []
+  and pred = ref 0
+  and i = ref 0
+  and space = (String.get " " 0) in
   begin
-  while !i<n do
-    if s.[!i] = space then
-      begin
-	res:= !res@[String.sub s !pred (!pred- !i)];
-	i:= !i+1;
-	pred := !i;
-      end
-    else
-      i:= !i+1
-  done;
-  !res
+    while !i<n do
+      if s.[!i] = space then
+	begin
+	  res:= !res@[String.sub s !pred (!i - !pred)];
+	  i:= !i+1;
+	  pred := !i;
+	end
+      else
+	i:= !i+1
+    done;
+    !res
   end
 
 let extraire ls =
   match ls with
-    [] -> failwith("ARGH : Not enough variables in the minisat file")
+    [] -> failwith("ARGH : Pas assez de variables dans minisat !")
   | t::q -> let n = int_of_string t in
 	    begin
 	      if n<0 then (-n, false, q)
@@ -174,15 +178,15 @@ let extraire ls =
 	   
 let rec verif_sat_aux t n bool ls =
   match t with
-    Leaf (true) -> print_string "OK"
-  | Leaf (false) -> print_string "ARGH : Le ROBDD dit que minisat est un menteur !"
+    Leaf (true) -> print_string "OK\n"
+  | Leaf (false) -> print_string "ARGH : Le ROBDD dit que minisat est un menteur !\n"
   | Node (i, fg, fd) when (i=n && bool) -> let (np,boolp,lsp)=extraire ls in
 					   verif_sat_aux fd np boolp lsp
   | Node (i, fg, fd) when (i=n && bool=false) -> let (np,boolp,lsp)=extraire ls in
 						 verif_sat_aux fg np boolp lsp
   | Node (i, fg, fd) when (i>n) -> let(np,boolp,lsp)=extraire ls in
 				   verif_sat_aux t np boolp lsp
-  | _ -> failwith("ARGH : error while reading the robdd")
+  | _ -> failwith("ARGH : error while reading the robdd\n")
     
 let verif_sat t s =
   let sp = split s in
@@ -200,5 +204,5 @@ let rec verif_unsat_aux t =
 let verif_unsat t =
   let bool = verif_unsat_aux t in
   match bool with
-    false -> print_string "ARGH"
-  | true -> print_string "OK"
+    false -> print_string "ARGH\n"
+  | true -> print_string "OK\n"
