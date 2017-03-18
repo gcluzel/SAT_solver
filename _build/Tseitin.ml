@@ -77,6 +77,7 @@ let rec tseitin expr =
          transform_sous_formule p1 (!i - 1);
          transform_sous_formule p2 !i
        end
+    | _ -> failwith("Erreur lors de la transformation via Tseitin")
   in
   transform_sous_formule (transform_expr expr) !i;
   (*let rec reduit l = match l with
@@ -85,3 +86,12 @@ let rec tseitin expr =
   in
   reduit !formule*)
   (!formule, !i)
+
+let tseitin_bdd expr =
+  let result, i = tseitin expr in
+  let rec reduit = function
+    | x1 :: x2 :: [] -> Conj(x1, x2)
+    | t :: q -> Conj(t, reduit(q))
+    | _ -> failwith("erreur construction expression sous forme tseitin")
+  in
+  reduit result

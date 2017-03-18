@@ -52,7 +52,7 @@ let opt_minisat () =
     let c = open_in Sys.argv.(2) in
     begin
       let result = parse c in
-      let t = construire_bdd result 100 in
+      let t = construire_bdd (tseitin_bdd result) 100 in
       begin
 	(* On crée en fait un fichier temporaire sur lequel on pourra appeler minisat *)
 	opt_tseitin "/tmp/pb.cnf" 2;
@@ -86,7 +86,7 @@ let opt_tseitin_minisat() =
     let c = open_in Sys.argv.(4) in
     begin
       let result = parse c in
-      let t = construire_bdd result 100 in
+      let t = construire_bdd (tseitin_bdd result) 100 in
       begin
 	(* On applique l'option Tseitin qu'on stocke dans le ficihier demandé *)
 	opt_tseitin Sys.argv.(3) 3;
