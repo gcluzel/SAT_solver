@@ -22,17 +22,13 @@ let rec transform_expr expr =
   match expr with
   | Const (x) -> Const x
   | Conj (exp1, exp2) -> Conj ((transform_expr exp1), (transform_expr exp2))
-  | Disj (exp1, exp2) -> Disj ((transform_expr exp1), (transform_expr exp2))
-  | Xor (exp1, exp2) -> begin
-      let exp1t = transform_expr exp1 in
-      let exp2t = transform_expr exp2 in
-      Disj ((Conj (exp1t, (Not (exp2t)))), (Conj ((Not exp1t), exp2t)))
-    end     
+  | Disj (exp1, exp2) -> Disj ((transform_expr exp1), (transform_expr exp2))   
   | Impl (exp1, exp2) -> begin
       let exp1t = transform_expr exp1 in
       let exp2t = transform_expr exp2 in
       Disj ((Not exp1t), exp2t)
     end
+  | Xor(exp1, exp2) -> Xor((transform_expr exp1), (transform_expr exp2))
   | Equiv (exp1, exp2) ->
      transform_expr (Conj(Impl(exp1, exp2), Impl(exp1, exp2)))
   | Not(exp) -> Not(transform_expr (exp))
@@ -63,6 +59,13 @@ let rec tseitin expr =
          formule := Disj(Not(Const(varp)),Not(Const(!i))) :: Disj(Const(varp), Const(!i)) :: !formule;
          transform_sous_formule p1 !i
        end
+    | Xor(p1,p2) ->
+       begin
+         i := !i + 2;
+         formule := Disj(Not(Const(varp)), Disj(Not(Const(!i)), Not(Const(!i - 1)))) :: Disj(Const(!i), Disj(Const(!i-1), Not(Const(varp)))) :: Disj(Const(!i), Disj(Not(Const(!i-1)), Const(varp))) :: Disj(Not(Const(!i)), Disj(Const(!i-1), Const(varp))) :: !formule;
+         transform_sous_formule p1 (!i);
+         transform_sous_formule p2 (!i-1)                                  
+       end
     | Disj(p1,p2) ->
        begin
          i := !i + 2;
@@ -77,7 +80,6 @@ let rec tseitin expr =
          transform_sous_formule p1 (!i - 1);
          transform_sous_formule p2 !i
        end
-    | _ -> failwith("Erreur lors de la transformation via Tseitin")
   in
   transform_sous_formule (transform_expr expr) !i;
   (*let rec reduit l = match l with
@@ -92,6 +94,5 @@ let tseitin_bdd expr =
   let rec reduit = function
     | x1 :: x2 :: [] -> Conj(x1, x2)
     | t :: q -> Conj(t, reduit(q))
-    | _ -> failwith("erreur construction expression sous forme tseitin")
   in
   reduit result
