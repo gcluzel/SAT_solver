@@ -85,3 +85,11 @@ let rec tseitin expr =
   in
   reduit !formule*)
   (!formule, !i)
+
+let tseitin_bdd expr =
+  let result, i = tseitin expr in
+  let rec reduit = function
+    | x1 :: x2 :: [] -> Conj(x1, x2)
+    | t :: q -> Conj(t, reduit(q))
+  in
+  reduit result
