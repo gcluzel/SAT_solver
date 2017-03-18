@@ -1,12 +1,14 @@
 ### Starting build.
 # Target: main.ml.depends, tags: { extension:ml, file:main.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep -modules main.ml > main.ml.depends # cached
+/usr/bin/ocamldep -modules main.ml > main.ml.depends
 # Target: bdd.ml.depends, tags: { extension:ml, file:bdd.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep -modules bdd.ml > bdd.ml.depends
+/usr/bin/ocamldep -modules bdd.ml > bdd.ml.depends # cached
 # Target: expr.ml.depends, tags: { extension:ml, file:expr.ml, ocaml, ocamldep, quiet }
 /usr/bin/ocamldep -modules expr.ml > expr.ml.depends # cached
 # Target: expr.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:expr.cmo, file:expr.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc -c -o expr.cmo expr.ml # cached
+# Target: bdd.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:bdd.cmo, file:bdd.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc -c -o bdd.cmo bdd.ml # cached
 # Target: dimacs.ml.depends, tags: { extension:ml, file:dimacs.ml, ocaml, ocamldep, quiet }
 /usr/bin/ocamldep -modules dimacs.ml > dimacs.ml.depends # cached
 # Target: dimacs.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:dimacs.cmo, file:dimacs.ml, implem, ocaml, quiet }
@@ -27,12 +29,12 @@
 /usr/bin/ocamldep -modules Tseitin.ml > Tseitin.ml.depends # cached
 # Target: Tseitin.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:Tseitin.cmo, file:Tseitin.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc -c -o Tseitin.cmo Tseitin.ml # cached
-# Target: bdd.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:bdd.cmo, file:bdd.ml, implem, ocaml, quiet }
-/usr/bin/ocamlc -c -o bdd.cmo bdd.ml
 # Target: main.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:main.cmo, file:main.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc -c -o main.cmo main.ml
 # Target: expr.cmx, tags: { compile, extension:cmx, extension:ml, file:expr.cmx, file:expr.ml, implem, native, ocaml, quiet }
 /usr/bin/ocamlopt -c -o expr.cmx expr.ml # cached
+# Target: bdd.cmx, tags: { compile, extension:cmx, extension:ml, file:bdd.cmx, file:bdd.ml, implem, native, ocaml, quiet }
+/usr/bin/ocamlopt -c -o bdd.cmx bdd.ml # cached
 # Target: dimacs.cmx, tags: { compile, extension:cmx, extension:ml, file:dimacs.cmx, file:dimacs.ml, implem, native, ocaml, quiet }
 /usr/bin/ocamlopt -c -o dimacs.cmx dimacs.ml # cached
 # Target: parser.ml.depends, tags: { extension:ml, file:parser.ml, ocaml, ocamldep, quiet }
@@ -43,10 +45,8 @@
 /usr/bin/ocamlopt -c -o lexer.cmx lexer.ml # cached
 # Target: Tseitin.cmx, tags: { compile, extension:cmx, extension:ml, file:Tseitin.cmx, file:Tseitin.ml, implem, native, ocaml, quiet }
 /usr/bin/ocamlopt -c -o Tseitin.cmx Tseitin.ml # cached
-# Target: bdd.cmx, tags: { compile, extension:cmx, extension:ml, file:bdd.cmx, file:bdd.ml, implem, native, ocaml, quiet }
-/usr/bin/ocamlopt -c -o bdd.cmx bdd.ml
 # Target: main.cmx, tags: { compile, extension:cmx, extension:ml, file:main.cmx, file:main.ml, implem, native, ocaml, quiet }
-/usr/bin/ocamlopt -c -o main.cmx main.ml # cached
+/usr/bin/ocamlopt -c -o main.cmx main.ml
 # Target: main.native, tags: { dont_link_with, extension:native, file:main.native, link, native, ocaml, program, quiet }
 /usr/bin/ocamlopt unix.cmxa expr.cmx Tseitin.cmx bdd.cmx dimacs.cmx parser.cmx lexer.cmx main.cmx -o main.native
 # Compilation successful.

@@ -49,9 +49,11 @@ let opt_tseitin nom i =
 let opt_minisat () =
   try
     (* On parse, on construit le BDD et Tseitin pour appeler minisat dessus *)
-    let c = open_in Sys.argv.(2) in
+    let c = open_in Sys.argv.(2)
+    and cp = open_in "f2bdd.cfg" in
     begin
-      let result = parse c in
+      let result = parse c
+      and taille_array = int_of_string (input_line cp) in
       begin
 	(* On crée en fait un fichier temporaire sur lequel on pourra appeler minisat *)
 	opt_tseitin "/tmp/pb.cnf" 2;
@@ -64,13 +66,14 @@ let opt_minisat () =
 		let s = input_line c in
 		begin
 		  match s with
-		    "SAT" -> let t = construire_bdd (tseitin_bdd result) 100 in
+		    "SAT" -> let t = construire_bdd (tseitin_bdd result) taille_array in
 			     verif_sat t (input_line c)
-		  | "UNSAT" ->      let t = construire_bdd result 100 in
+		  | "UNSAT" ->      let t = construire_bdd result taille_array in
 				    verif_unsat t
 		  | _ -> failwith("error in the result file of minisat")
 		end;
 		close_in c;
+		close_in cp;
 	      end;
 	      res:= Sys.command "rm /tmp/output.txt"
 	    end;
@@ -84,9 +87,11 @@ let opt_minisat () =
 let opt_tseitin_minisat() =
   try
     (* On parse, on construit le BDD et Tseitin pour appeler minisat dessus *)
-    let c = open_in Sys.argv.(4) in
+    let c = open_in Sys.argv.(4)
+    and cp = open_in "f2bdd.cfg" in
     begin
-      let result = parse c in
+      let result = parse c
+      and taille_array = int_of_string (input_line cp) in
       begin
 	(* On applique l'option Tseitin qu'on stocke dans le ficihier demandé *)
 	opt_tseitin Sys.argv.(3) 3;
@@ -98,9 +103,9 @@ let opt_tseitin_minisat() =
 	    let s = input_line c in
 	    begin
 	      match s with
-		"SAT" -> let t = construire_bdd (tseitin_bdd result) 100 in
+		"SAT" -> let t = construire_bdd (tseitin_bdd result) taille_array in
 			 verif_sat t (input_line c)
-	      | "UNSAT" -> let t = construire_bdd result 100 in
+	      | "UNSAT" -> let t = construire_bdd result taille_array in
 			   verif_unsat t
 	      | _ -> failwith("error in the result file of minisat")
 	    end;
@@ -109,6 +114,7 @@ let opt_tseitin_minisat() =
 	  res:= Sys.command "rm /tmp/output.txt"
 	end;
 	close_in c;
+	close_in cp;
       end;
     end
   with e -> (print_string (Printexc.to_string e))
