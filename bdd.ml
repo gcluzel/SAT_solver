@@ -180,10 +180,20 @@ let rec verif_sat_aux t n bool ls =
   match t with
     Leaf (true) -> print_string "OK\n"
   | Leaf (false) -> print_string "ARGH : Le ROBDD dit que minisat est un menteur !\n"
-  | Node (i, fg, fd) when (i=n && bool) -> let (np,boolp,lsp)=extraire ls in
-					   verif_sat_aux fd np boolp lsp
-  | Node (i, fg, fd) when (i=n && bool=false) -> let (np,boolp,lsp)=extraire ls in
-						 verif_sat_aux fg np boolp lsp
+  | Node (i, fg, fd) when (i=n && bool) -> begin
+					   match fd with
+					     Leaf (true) -> print_string "OK\n"
+					   | Leaf (false) -> print_string "ARGH : Le ROBDD dit que minisat est un menteur ! \n"
+					   | _ ->let (np,boolp,lsp)=extraire ls in
+						 verif_sat_aux fd np boolp lsp
+					 end
+  | Node (i, fg, fd) when (i=n && bool=false) -> begin
+						 match fg with
+						   Leaf (true) -> print_string "OK\n"
+						 | Leaf (false) -> print_string "ARGH : Le ROBDD dit que minisat est un menteur !\n"
+						 | _ -> let (np,boolp,lsp)=extraire ls in
+							verif_sat_aux fg np boolp lsp
+					       end
   | Node (i, fg, fd) when (i>n) -> let(np,boolp,lsp)=extraire ls in
 				   verif_sat_aux t np boolp lsp
   | _ -> failwith("ARGH : error while reading the robdd\n")
