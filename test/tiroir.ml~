@@ -1,0 +1,12 @@
+let tiroir n =
+	let sortie = ref "" in
+	let aux1 p =
+		match p with
+		| 0 -> sortie:= !sortie ^ ") "
+		| _ -> 
+			begin
+				sortie := !sortie ^ "("
+				for t = 0 to (n-1) do
+					sortie := !sortie ^ "\/ " ^ string_of_int ((p-1) + (t + p - 1) * (t + p)  / 2) ^ " "
+				done;
+				sortie := !sortie ^ string_of_int ((p-1) + (n + p - 1) * (n + p) /2) ^ ") /\ "

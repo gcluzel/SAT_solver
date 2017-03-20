@@ -1,0 +1,8 @@
+let rotation n =
+	let sortie = ref "1" in
+	for i = 2 to n do
+		sortie := !sortie ^ " <=> " ^ (string_of_int i)
+	done;
+	sortie := !sortie ^ " 0\n";
+	let fichier = open_out "rotation.form" in
+	output_string fichier !sortie

@@ -42,7 +42,7 @@ let opt_tseitin nom i =
     close_in c;
     let formule, i = tseitin result in
     cnf_to_dimacs formule i nom_fichier;
-    print_string ("Le fichier " ^ nom_fichier ^ ".cnf a été créé \n")
+    (* print_string ("Le fichier " ^ nom_fichier ^ ".cnf a ete cree \n")*)
   with _ -> (print_string "erreur pour l'option -tseitin \n")
 ;;
   
@@ -50,17 +50,18 @@ let opt_minisat () =
   try
     (* On parse, on construit le BDD et Tseitin pour appeler minisat dessus *)
     let c = open_in Sys.argv.(2)
-    and cp = open_in "f2bdd.cfg" in
+    and cp = open_in "f2bdd.cfg"
+    and nom_fichier = String.sub Sys.argv.(2) 0 (String.index Sys.argv.(2) '.') in
     begin
       let result = parse c
       and taille_array = int_of_string (input_line cp) in
       begin
 	(* On crée en fait un fichier temporaire sur lequel on pourra appeler minisat *)
-	opt_tseitin "/tmp/pb.cnf" 2;
-	let sortie_sat = "/tmp/output.txt" and minisat_command = "minisat /tmp/pb.cnf /tmp/output.txt" and res = ref 0 in
+	opt_tseitin Sys.argv.(2) 2;
+	let sortie_sat = "/tmp/output.txt" and minisat_command = "minisat " ^ nom_fichier ^ ".cnf /tmp/output.txt" and res = ref 0 in
 	    begin 
 	      res := Sys.command minisat_command;
-	      res := Sys.command "rm /tmp/pb.cnf";
+	      res := Sys.command ("rm " ^ nom_fichier ^ ".cnf");
 	      let c = open_in sortie_sat in
 	      begin
 		let s = input_line c in
@@ -87,29 +88,30 @@ let opt_minisat () =
 let opt_tseitin_minisat() =
   try
     (* On parse, on construit le BDD et Tseitin pour appeler minisat dessus *)
-    let c = open_in Sys.argv.(4)
-    and cp = open_in "f2bdd.cfg" in
+    let c = open_in Sys.argv.(3)
+      and nom_fichier = String.sub Sys.argv.(3) 0 (String.index Sys.argv.(3) '.')
+      and cp = open_in "f2bdd.cfg" in
     begin
       let result = parse c
       and taille_array = int_of_string (input_line cp) in
       begin
 	(* On applique l'option Tseitin qu'on stocke dans le ficihier demandé *)
 	opt_tseitin Sys.argv.(3) 3;
-	let sortie_sat = "/tmp/output.txt" and minisat_command = "minisat "^Sys.argv.(3)^" /tmp/output.txt" and res = ref 0 in
+	let sortie_sat = "/tmp/output.txt" and minisat_command = "minisat " ^ nom_fichier ^ ".cnf /tmp/output.txt" and res = ref 0 in
 	begin 
 	  res := Sys.command minisat_command;
-	  let c = open_in sortie_sat in
+	  let c2 = open_in sortie_sat in
 	  begin
-	    let s = input_line c in
+	    let s = input_line c2 in
 	    begin
 	      match s with
 		"SAT" -> let t = construire_bdd (tseitin_bdd result) taille_array in
-			 verif_sat t (input_line c)
+			 verif_sat t (input_line c2)
 	      | "UNSAT" -> let t = construire_bdd result taille_array in
 			   verif_unsat t
 	      | _ -> failwith("error in the result file of minisat")
 	    end;
-	    close_in c;
+	    close_in c2;
 	  end;
 	  res:= Sys.command "rm /tmp/output.txt"
 	end;
