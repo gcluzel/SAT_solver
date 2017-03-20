@@ -12,7 +12,7 @@ let rotation n =
             
 let _ =
   try
-    parite (int_of_string Sys.argv.(1));
+    rotation (int_of_string Sys.argv.(1));
     print_string "Le fichier test/rotation.form a ete cree.\n"
   with
     _ -> print_string "Erreur d'argument. L'argument donne doit etre un nombre.\n"
