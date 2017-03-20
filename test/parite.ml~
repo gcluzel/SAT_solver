@@ -1,0 +1,16 @@
+
+(* fonction qui prend en entrée un entier et fait un gros xor sur le nombre en argument *)
+
+let parite n =
+  let sortie = ref "~(" in
+  let rec aux i = match i with
+    | 1 -> sortie := !sortie  ^ (string_of_int n) ^ ") 0"
+    | _ -> begin
+        sortie := !sortie  ^ (string_of_int (n - i + 1)) ^ " X ";
+        aux (i - 1)
+      end
+  in
+  aux n;
+  let file = open_out "parite.form" in
+  output_string file !sortie;
+  close_out file
