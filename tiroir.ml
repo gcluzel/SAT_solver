@@ -31,3 +31,11 @@ let tiroir n =
   let file = open_out "tiroir.form" in
   output_string file !sortie;
   close_out file
+
+let _ =
+  try
+    tiroir (int_of_string Sys.argv.(1));
+    print_string "Le fichier test/tiroir.form a ete cree.\n"
+  with
+    _ -> print_string "Erreur d'argument. L'argument donne doit etre un nombre.\n"
+    

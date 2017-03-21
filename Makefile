@@ -4,6 +4,7 @@ all:
 	ocamlbuild -yaccflag -v -lib unix rotations.native; ln -fs rotations.native rotations
 	ocamlbuild -yaccflag -v -lib unix tiroir.native; ln -fs tiroir.native tiroir
 	ocamlbuild -yaccflag -v -lib unix addition.native; ln -fs addition.native addition
+	ocamlbuild -yaccflag -v -lib unix aleatoire.native; ln -fs aleatoire.native aleatoire
 
 byte: 
 	ocamlbuild -yaccflag -v main.byte
@@ -11,5 +12,6 @@ byte:
 	ocamlbuild -yaccflag -v rotations.byte
 	ocamlbuild -yaccflag -v tiroir.byte
 	ocamlbuild -yaccflag -v addition.byte
+	ocamlbuild -yaccflag -v aleatoire.byte
 clean: 
 	ocamlbuild -clean
