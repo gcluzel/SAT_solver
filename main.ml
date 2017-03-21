@@ -130,5 +130,8 @@ let _ =
 		   "-tseitin" -> opt_tseitin_minisat()
 		 | _ -> opt_minisat()
 	       end
-  | "-tseitin" -> opt_tseitin Sys.argv.(2) 2
+  | "-tseitin" -> begin 
+  					opt_tseitin Sys.argv.(2) 2; 
+  					print_string "fichier crée\n"
+  				  end
   | _ -> calc()

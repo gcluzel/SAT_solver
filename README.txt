@@ -1,9 +1,9 @@
-
-
 Le BDD est assez lent quand la formule est satisfiable et qu'il y a plus de 100 variables.
-Mais il sort toujours la même réponse que minisat que la formule soit satifisable ou non.
+Il sort toujours la même réponse que minisat que la formule soit satifisable ou non, ce qui est plutôt une bonne nouvelle.
 
+Sur les exemples du cours, certains sont très longs à traiter avec le BDD.
 
+Sans argument, le programme affiche simplement le BDD.
 
 =========================================================
                         BDD

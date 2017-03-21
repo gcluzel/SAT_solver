@@ -46,14 +46,12 @@ let alea n = Random.self_init ();
   let rec creer_formule i = match i with
     |  0 -> Const ((Random.int (2*n)) + 1)
     | _ -> begin 
-	let a = Random.int 6 in 
+	let a = Random.int 4 in 
 	match a with
 	| 0 -> Conj(creer_formule (i-1), creer_formule (i-1))
 	| 1 -> Disj(creer_formule (i-1), creer_formule (i-1))
 	| 2 -> Xor(creer_formule (i-1), creer_formule (i-1))
-	| 3 -> Impl(creer_formule (i-1), creer_formule (i-1))
-	| 4 -> Equiv(creer_formule (i-1), creer_formule (i-1))
-	| 5 -> Not(creer_formule (i-1))
+	| 3 -> Not(creer_formule (i-1))
         | _ -> failwith "impossible case\n"
       end
   in
