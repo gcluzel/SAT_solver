@@ -1,6 +1,7 @@
 
 
-
+Le BDD est assez lent quand la formule est satisfiable et qu'il y a plus de 100 variables.
+Mais il sort toujours la même réponse que minisat que la formule soit satifisable ou non.
 
 
 
@@ -41,4 +42,4 @@ Pour utiliser les tests : (remplacer n par un entier)
  
  Ce dernier fichier prend un nombre en entrée et créer une formule de hauteur n aléatoire.
  
- Ces commandes créent un fichier .form qu'il faut ensuite passer en argument de f2bbd
+ Ces commandes créent un fichier .form qu'il faut ensuite passer en argument de f2bbd.
